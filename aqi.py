@@ -2,13 +2,13 @@ from collections import namedtuple
 from datetime import datetime
 import requests, re
 
-Station         = namedtuple("Station", "Id Name Address Latitude Longitude")
-Concentration   = namedtuple("Concentration", 'ReadTime PM10 SO2 O3 NO2 CO')
-AQI             = namedtuple("AQI", 'ReadTime PM10 SO2 O3 NO2 CO AQIIndex ContaminantParameter State Color')
+Station         = namedtuple('Station', 'Id Name Address Latitude Longitude')
+Concentration   = namedtuple('Concentration', 'ReadTime PM10 SO2 O3 NO2 CO')
+AQI             = namedtuple('AQI', 'ReadTime PM10 SO2 O3 NO2 CO AQIIndex ContaminantParameter State Color')
 
 def GetAQIStations():
     with requests.Session() as s:
-        url = "https://api.ibb.gov.tr/havakalitesi/OpenDataPortalHandler/GetAQIStations"
+        url = 'https://api.ibb.gov.tr/havakalitesi/OpenDataPortalHandler/GetAQIStations'
         r = s.get(url)
         r.raise_for_status()
 
@@ -30,18 +30,18 @@ def GetAQIStations():
     
 def GetAQIByStationId(stationId: str, startDate: datetime, endDate: datetime):
     with requests.Session() as s:
-        url = "https://api.ibb.gov.tr/havakalitesi/OpenDataPortalHandler/GetAQIByStationId"
+        url = 'https://api.ibb.gov.tr/havakalitesi/OpenDataPortalHandler/GetAQIByStationId'
         params = {
-            "StationId": stationId,
-            "StartDate": startDate.strftime("%d.%m.%Y %H:%M:%S"),
-            "EndDate": endDate.strftime("%d.%m.%Y %H:%M:%S")
+            'StationId': stationId,
+            'StartDate': startDate.strftime('%d.%m.%Y %H:%M:%S'),
+            'EndDate': endDate.strftime('%d.%m.%Y %H:%M:%S')
             }
         r = s.get(url, params=params)
         r.raise_for_status()
 
         C, A = [], []
         for record in r.json():
-            ReadTime = record.get('ReadTime')
+            ReadTime = record.pop('ReadTime')
             ReadTime = datetime.fromisoformat(ReadTime)
             if c := record.get('Concentration'):
                 c |= {'ReadTime': ReadTime}
