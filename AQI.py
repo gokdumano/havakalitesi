@@ -45,7 +45,7 @@ def GetAQIByStationId(stationId: str, startDate: datetime, endDate: datetime):
             ReadTime = datetime.fromisoformat(ReadTime)
             if c := record.get('Concentration'):
                 c |= {'ReadTime': ReadTime}
-                C.append(Concentration(**{c))
+                C.append(Concentration(**c))
             if a := record.get('AQI'):
                 a |= {'ReadTime': ReadTime}
                 A.append(AQI(**a))
